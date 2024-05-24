@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Введите имя и электронную почту</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+</head>
+<body>
+    {% if session.user_name %}
+        <h1>Привет, {{ session.user_name }}!</h1>
+        <a href="/logout">Log out</a>
+        {% else %}
+            <a href="/login">Log in</a>
+        {% endif %}
+</body>
+</html>
