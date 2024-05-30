@@ -9,7 +9,7 @@ fin_threading = 0.0
 fin_multiprocessing = 0.0
 
 data_images = []
-with open('images.txt','r',encoding='utf-8') as images:
+with open('images.txt','r') as images:
     for img in images.readlines():
         data_images.append(img.strip())
 
@@ -20,19 +20,29 @@ def download_img(url):
     start_time = time.time()
     response = requests.get(url, stream=True)
     filename = image_path.joinpath(os.path.basename(url))
-    with open(filename, 'wb', encoding='utf-8') as f:
+    with open(filename, 'wb') as f:
         for chunk in response.iter_content(chunk_size=1024):
             if chunk:
                 f.write(chunk)
     end_time = time.time() - start_time
     print(f'Загрузка {filename} завершена за {end_time:.2f} секунд')
 
+async def download_img_async(url):
+    start_time = time.time()
+    response = await asyncio.get_event_loop().run_in_executor(None, requests.get, url, {"stream": True})
+    filename = image_path.joinpath(os.path.basename(url))
+    with open(filename, 'wb') as f:
+        for chunk in response.iter_content(chunk_size=1024):
+            if chunk:
+                f.write(chunk)
+    end_time = time.time() - start_time
+    print(f'Загрузка {filename} завершена за {end_time:.2f} секунд')
 
-async def download_img_async(urls):
+async def download_img_asyncio(urls):
     start_time = time.time()
     tasks = []
     for url in urls:
-        task = asyncio.ensure_future(download_img(url))
+        task = asyncio.ensure_future(download_img_async(url))
         tasks.append(task)
 
     await asyncio.gather(*tasks)
@@ -69,7 +79,8 @@ def download_img_threading(urls):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Программа-парсер для добавления изображеий по URL-адресам')
-    parser.add_argument(default=data_images,
+    parser.add_argument("--urls",
+                        default=data_images,
                         nargs="+",
                         help='Список URL-адресов источников изображений')
     args = parser.parse_args()
@@ -85,4 +96,4 @@ if __name__ == '__main__':
     download_img_multiprocessing(urls)
 
     print(f'Загрузка {len(urls)} изображений асинхронным методом')
-    asyncio.run(download_img_async(urls))
+    asyncio.run(download_img_asyncio(urls))
