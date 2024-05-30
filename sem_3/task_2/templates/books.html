@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Show books</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+</head>
+<body>
+    <h2>List of books:</h2>
+    {% for book in books %}
+        <p>Book: "{{ book.title }}"<br>
+            {% for author in book.authors %}
+                Author: {{ author.firstname }} {{ author.lastname }} </p>
+            {% endfor %}
+    {% endfor %}
+</body>
+</html>

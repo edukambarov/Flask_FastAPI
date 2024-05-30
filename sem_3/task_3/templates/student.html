@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Show students</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+</head>
+<body>
+    <h2>List of students:</h2>
+    {% for student in students %}
+    <p>Student: {{ student.firstname }} {{ student.lastname }}<br>
+    Faculty: {{ student.faculty }}</p>
+    {% endfor %}
+</body>
+</html>
