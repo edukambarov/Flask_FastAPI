@@ -1,8 +1,6 @@
-from datetime import datetime, timezone
-
 from databases import Database
 import sqlalchemy
-from sqlalchemy import ForeignKey, DateTime
+from sqlalchemy import ForeignKey
 
 from sem6_hw.dbs.settings import settings
 
@@ -38,7 +36,7 @@ orders = sqlalchemy.Table("orders",
                          sqlalchemy.Column("good_id", sqlalchemy.Integer, ForeignKey("goods.good_id")),
                          sqlalchemy.Column("quantity", sqlalchemy.Integer),
                          sqlalchemy.Column("status", sqlalchemy.Boolean),
-                         sqlalchemy.Column("date", sqlalchemy.DateTime, default=datetime.now()),
+                         sqlalchemy.Column("date", sqlalchemy.DateTime),
                          )
 
 engine = sqlalchemy.create_engine(DATABASE_URL, connect_args={'check_same_thread': False})

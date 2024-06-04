@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from sem6_hw.dbs.db import database, orders, users, goods
 # from sem6_hw.models.users import User, UserIn
 # from sem6_hw.models.goods import Good, GoodIn
@@ -26,6 +26,8 @@ async def get_active_orders():
 @router_order.get("/orders/{order_id}", response_model=Order)
 async def read_order(id: int):
     query = orders.select().where(orders.c.order_id == id)
+    if not query:
+        raise HTTPException(status_code=404, detail="Order not found")
     return await database.fetch_one(query)
 
 
@@ -39,6 +41,8 @@ async def add_order(order: OrderIn):
 @router_order.put("/orders/{order_id}", response_model=Order)
 async def update_order(id: int, new_order: OrderIn):
     query = orders.update().where(orders.c.order_id == id).values(**new_order.dict())
+    if not query:
+        raise HTTPException(status_code=404, detail="Order not found")
     await database.execute(query)
     return {**new_order.dict(), "order_id": id}
 
@@ -46,6 +50,8 @@ async def update_order(id: int, new_order: OrderIn):
 # @router_order.delete("/orders/{order_id}")
 # async def delete_order(id: int):
 #     query = orders.delete().where(orders.c.order_id == id).values()
+#     if not query:
+#         raise HTTPException(status_code=404, detail="Order not found")
 #     await database.execute(query)
 #     return {'message': 'Order deleted'}
 
@@ -53,5 +59,7 @@ async def update_order(id: int, new_order: OrderIn):
 @router_order.delete("/orders/{order_id}")
 async def soft_delete_order(id: int):
     query = orders.update().where(orders.c.order_id == id).values(status=False)
+    if not query:
+        raise HTTPException(status_code=404, detail="Order not found")
     await database.execute(query)
     return {'message': 'Order inactivated'}
